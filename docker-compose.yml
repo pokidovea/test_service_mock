@@ -1,0 +1,34 @@
+version: '3'
+services:
+    mock_server:
+        image: mockserver/mockserver:mockserver-5.11.2
+        container_name: mock_server
+        command: -logLevel DEBUG -serverPort 1090
+        ports:
+          - 80:1090
+        environment:
+            MOCKSERVER_PROPERTY_FILE: /config/mockserver.properties
+            MOCKSERVER_INITIALIZATION_JSON_PATH: /config/expectations.json
+        volumes:
+            - ./mock_conf:/config
+        networks:
+            my_net:
+                ipv4_address: 172.26.0.3
+
+    test_client:
+        image: client
+        container_name: test_client
+        build: ./client
+        links:
+            - mock_server
+        extra_hosts:
+         - "google.com:172.26.0.3"
+        networks:
+            my_net:
+                ipv4_address: 172.26.0.4
+networks:
+    my_net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.26.0.0/16

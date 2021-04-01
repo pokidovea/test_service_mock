@@ -1,16 +1,11 @@
 version: '3'
 services:
     mock_server:
-        image: mockserver/mockserver:mockserver-5.11.2
+        image: server
         container_name: mock_server
-        command: -logLevel DEBUG -serverPort 1090
+        build: ./server
         ports:
-          - 80:1090
-        environment:
-            MOCKSERVER_PROPERTY_FILE: /config/mockserver.properties
-            MOCKSERVER_INITIALIZATION_JSON_PATH: /config/expectations.json
-        volumes:
-            - ./mock_conf:/config
+          - 80:8899
         networks:
             my_net:
                 ipv4_address: 172.26.0.3
@@ -19,10 +14,11 @@ services:
         image: client
         container_name: test_client
         build: ./client
-        links:
-            - mock_server
+        environment:
+          - HTTP_PROXY=proxy:8899
+          - HTTPS_PROXY=proxy:8899
         extra_hosts:
-         - "google.com:172.26.0.3"
+         - "proxy:172.26.0.3"
         networks:
             my_net:
                 ipv4_address: 172.26.0.4

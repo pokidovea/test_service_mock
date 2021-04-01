@@ -2,17 +2,20 @@ from time import sleep
 
 import requests
 
-for i in range(10):
-    try:
-        response = requests.get('http://google.com:1090/simpleFirst')
-    except Exception as e:
-        print(str(e))
-        sleep(10)
-        continue
+URLS = [
+    'http://facebook.com/',
+    'http://facebook.com/hi/',
+    'http://facebook.com/hello/',
+]
 
-    if response.status_code != 200:
-        print(response.status_code)
-        sleep(10)
-    else:
+for url in URLS:
+    for i in range(10):
+        try:
+            response = requests.get(url)
+        except Exception as e:
+            print(str(e))
+            sleep(10)
+            continue
+
         print(response.content.decode('utf-8'))
         break

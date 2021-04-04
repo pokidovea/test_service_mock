@@ -6,25 +6,11 @@ services:
         build: ./server
         ports:
           - 80:8899
-        networks:
-            my_net:
-                ipv4_address: 172.26.0.3
 
     test_client:
         image: client
         container_name: test_client
         build: ./client
         environment:
-          - HTTP_PROXY=proxy:8899
-          - HTTPS_PROXY=proxy:8899
-        extra_hosts:
-         - "proxy:172.26.0.3"
-        networks:
-            my_net:
-                ipv4_address: 172.26.0.4
-networks:
-    my_net:
-        ipam:
-            driver: default
-            config:
-                - subnet: 172.26.0.0/16
+          - HTTP_PROXY=mock_server:8899
+          - HTTPS_PROXY=mock_server:8899
